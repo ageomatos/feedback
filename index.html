@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Satisfaction Form</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        .icon-button {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 0 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #e2e8f0; /* Light gray background */
+            color: #4a5568; /* Darker gray text */
+            border: 2px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .icon-button:hover {
+            background-color: #cbd5e0; /* Slightly darker on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .icon-button.selected {
+            border-color: #4c51bf; /* Blue border when selected */
+            background-color: #e0e7ff; /* Lighter blue background when selected */
+            color: #4c51bf; /* Darker blue text when selected */
+        }
+        .icon-button .icon {
+            font-size: 48px; /* Larger icon size */
+            margin-bottom: 8px;
+        }
+        .text-area-section {
+            margin-top: 32px;
+            transition: opacity 0.5s ease, max-height 0.5s ease;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+        }
+        .text-area-section.visible {
+            opacity: 1;
+            max-height: 200px; /* Adjust as needed to fit content */
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            resize: vertical;
+            min-height: 80px;
+            font-size: 16px;
+            color: #2d3748;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+        button[type="submit"] {
+            margin-top: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            background-color: #4c51bf; /* Blue submit button */
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #3b3f8a; /* Darker blue on hover */
+            transform: translateY(-1px);
+        }
+        @media (max-width: 600px) {
+            .icon-button {
+                margin: 0 8px;
+                padding: 12px;
+            }
+            .icon-button .icon {
+                font-size: 40px;
+            }
+            .form-container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">How we did this time with your order?</h1>
+        <p class="text-gray-600 mb-8">Your feedback is important for us.</p>
+
+        <div class="flex justify-center mb-8">
+            <!-- Excellent Icon -->
+            <div id="excellent" class="icon-button" data-rating="excellent">
+                <i class="fas fa-laugh-beam icon text-green-600"></i>
+                <span>Excellent</span>
+            </div>
+
+            <!-- OK Icon -->
+            <div id="ok" class="icon-button" data-rating="ok">
+                <i class="fas fa-meh icon text-yellow-600"></i>
+                <span>OK</span>
+            </div>
+
+            <!-- Bad Icon -->
+            <div id="bad" class="icon-button" data-rating="bad">
+                <i class="fas fa-sad-tear icon text-red-600"></i>
+                <span>Bad</span>
+            </div>
+        </div>
+
+        <div id="textAreaSection" class="text-area-section">
+            <textarea id="additionalInfo" placeholder="Tell us more (optional)"></textarea>
+            <button type="submit" id="submitButton">Submit Feedback</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const excellentBtn = document.getElementById('excellent');
+            const okBtn = document.getElementById('ok');
+            const badBtn = document.getElementById('bad');
+            const textAreaSection = document.getElementById('textAreaSection');
+            const additionalInfoTextarea = document.getElementById('additionalInfo');
+            const submitButton = document.getElementById('submitButton');
+            let selectedRating = null;
+
+            // Function to handle icon clicks
+            const handleIconClick = (event) => {
+                // Remove 'selected' class from all buttons
+                [excellentBtn, okBtn, badBtn].forEach(btn => btn.classList.remove('selected'));
+
+                // Add 'selected' class to the clicked button
+                const clickedButton = event.currentTarget;
+                clickedButton.classList.add('selected');
+
+                // Store the selected rating
+                selectedRating = clickedButton.dataset.rating;
+
+                // Show the text area and submit button with a smooth transition
+                textAreaSection.classList.add('visible');
+                additionalInfoTextarea.focus(); // Focus on the textarea for immediate input
+            };
+
+            // Add event listeners to icons
+            excellentBtn.addEventListener('click', handleIconClick);
+            okBtn.addEventListener('click', handleIconClick);
+            badBtn.addEventListener('click', handleIconClick);
+
+            // Handle form submission
+            submitButton.addEventListener('click', () => {
+                if (selectedRating) {
+                    const feedback = {
+                        rating: selectedRating,
+                        comments: additionalInfoTextarea.value.trim()
+                    };
+                    console.log('Customer Feedback:', feedback);
+
+                    // You would typically send this data to a server here, e.g.:
+                    // fetch('/api/submit-feedback', {
+                    //     method: 'POST',
+                    //     headers: { 'Content-Type': 'application/json' },
+                    //     body: JSON.stringify(feedback)
+                    // })
+                    // .then(response => response.json())
+                    // .then(data => console.log('Success:', data))
+                    // .catch(error => console.error('Error:', error));
+
+                    // Optionally, clear the form and hide the text area after submission
+                    selectedRating = null;
+                    additionalInfoTextarea.value = '';
+                    textAreaSection.classList.remove('visible');
+                    [excellentBtn, okBtn, badBtn].forEach(btn => btn.classList.remove('selected'));
+
+                    // Provide visual feedback to the user (e.g., a simple message)
+                    alert("Thank you! We sincerely appreciate your feedback.");
+
+                    // Close the current tab (Note: This might not work in all browser contexts due to security restrictions)
+                    window.close();
+                } else {
+                    alert("Please select a satisfaction level before submitting.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
